@@ -1,27 +1,8 @@
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import BPOM_DB from '../../data/regulations.js';
 import pool from '../db.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const dataPath = path.join(__dirname, '..', '..', 'data', 'regulations.js');
 
 async function migrate() {
   try {
-    // Read the file and extract the BPOM_DB object
-    let content = fs.readFileSync(dataPath, 'utf-8');
-    // We add an export to safely evaluate it in this script context
-    content = content + '\nexport default BPOM_DB;';
-    
-    // Instead of dynamic import of a modified string which is tricky, let's just 
-    // extract it using a Function constructor or simple string manipulation
-    let dataRaw = fs.readFileSync(dataPath, 'utf-8');
-    dataRaw = dataRaw.replace('export default BPOM_DB;', '');
-    const extractDbCode = dataRaw + '\\nreturn BPOM_DB;';
-    const BPOM_DB = new Function(extractDbCode)();
-    
     console.log('Successfully loaded data from regulations.js');
     console.log('Connecting to PostgreSQL to run migrations...');
 

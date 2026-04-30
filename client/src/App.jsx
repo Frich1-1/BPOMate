@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Settings, Shield, Server, ArrowRight, User, Zap, Database, Clock, LayoutDashboard, FileText, UserPlus, Trash2, BarChart3, Loader2 } from 'lucide-react';
+import { CheckCircle, Settings, Shield, Server, ArrowRight, User, Zap, Database, Clock, LayoutDashboard, FileText, UserPlus, Trash2, BarChart3, Loader2 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 
 // ─── API Config ────────────────────────────────────────────
@@ -36,7 +36,7 @@ const exportPDF = (resultData) => {
   const { result: res, query, ts } = resultData;
   const cat = res.topCategory;
   const doc = new jsPDF();
-  doc.setFontSize(20); doc.setTextColor(124, 58, 237);
+  doc.setFontSize(20); doc.setTextColor(6, 64, 43);
   doc.text('BPOMate — Regulatory Report', 14, 22);
   doc.setFontSize(9); doc.setTextColor(120, 120, 120);
   doc.text('Generated: ' + fmtDate(new Date().toISOString()), 14, 30);
@@ -53,10 +53,10 @@ const exportPDF = (resultData) => {
   doc.text('Confidence: ' + res.confidence + '% (' + res.level + ')', 14, y); y += 7;
   doc.text('Regulations: ' + cat.regulations.map(r => r.code).join(', '), 14, y); y += 10;
   doc.setDrawColor(200); doc.line(14, y, 196, y); y += 8;
-  doc.setFontSize(12); doc.setTextColor(124, 58, 237);
+  doc.setFontSize(12); doc.setTextColor(6, 64, 43);
   doc.text('Test Parameters (' + cat.parameters.length + ')', 14, y); y += 8;
   doc.setFontSize(8); doc.setTextColor(255, 255, 255);
-  doc.setFillColor(124, 58, 237); doc.rect(14, y - 4, 182, 7, 'F');
+  doc.setFillColor(6, 64, 43); doc.rect(14, y - 4, 182, 7, 'F');
   doc.text('#', 16, y); doc.text('Parameter', 24, y); doc.text('Limit', 100, y); doc.text('Method', 135, y); doc.text('Type', 180, y); y += 6;
   doc.setFontSize(7.5);
   cat.parameters.forEach((p, i) => {
@@ -254,12 +254,12 @@ function DashboardPage({ user, toast, db }) {
 
   return (
     <div>
-      <div className="page-title-block animate-up" style={{ '--stagger': 1 }}>
+      <div className="page-title-block" >
         <h1 className="page-title">Analysis Dashboard</h1>
         <p className="page-subtitle">Submit a product description to the NLP engine for instant BPOM requirement matching.</p>
       </div>
 
-      <div className="stats-row animate-up" style={{ '--stagger': 2 }}>
+      <div className="stats-row" >
         {stats.map((st, i) => (
           <div key={i} className="stat-card">
             <div className="stat-label">{st.l}</div>
@@ -269,7 +269,7 @@ function DashboardPage({ user, toast, db }) {
         ))}
       </div>
 
-      <div className="dash-grid animate-up" style={{ '--stagger': 3 }}>
+      <div className="dash-grid" >
         {/* Input Panel */}
         <div className="card">
           <div className="card-header">
@@ -439,17 +439,17 @@ function HistoryPage() {
 
   return (
     <div>
-      <div className="page-title-block animate-up" style={{ '--stagger': 1 }}>
+      <div className="page-title-block" >
         <h1 className="page-title">Audit Log</h1>
         <p className="page-subtitle">Complete history of all AI mapping transactions across the team.</p>
       </div>
-      <div className="toolbar-row animate-up" style={{ '--stagger': 2 }}>
+      <div className="toolbar-row" >
         <div className="search-box">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" /></svg>
           <input type="text" className="form-control" placeholder="Search product descriptions..." value={search} onChange={e => setSearch(e.target.value)} />
         </div>
       </div>
-      <div className="card animate-up" style={{ '--stagger': 3 }}>
+      <div className="card" >
         {filtered.length === 0 ? (
           <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>No audit logs found.</div>
         ) : (
@@ -482,11 +482,11 @@ function DatabasePage({ db }) {
 
   return (
     <div>
-      <div className="page-title-block animate-up" style={{ '--stagger': 1 }}>
+      <div className="page-title-block" >
         <h1 className="page-title">Regulatory DB</h1>
         <p className="page-subtitle">The ground-truth BPOM categories driving the AI matching engine.</p>
       </div>
-      <div className="cat-grid animate-up" style={{ '--stagger': 2 }}>
+      <div className="cat-grid" >
         {db.categories.map((c, i) => (
           <div key={c.id} className="cat-card" style={{ '--stagger': i + 2 }} onClick={() => setModalCat(c)}>
             <div className="cat-card-head">
@@ -539,12 +539,12 @@ function AdminPage({ toast, db, onToggleCategory }) {
 
   return (
     <div>
-      <div className="page-title-block animate-up" style={{ '--stagger': 1 }}>
+      <div className="page-title-block" >
         <h1 className="page-title">Admin Controller</h1>
         <p className="page-subtitle">System configuration, users, and mapping toggle rules.</p>
       </div>
 
-      <div className="stats-row animate-up" style={{ '--stagger': 2 }}>
+      <div className="stats-row" >
         {sysStats.map((st, i) => (
           <div key={i} className="stat-card">
             <div className="stat-label">{st.l}</div>
@@ -554,7 +554,7 @@ function AdminPage({ toast, db, onToggleCategory }) {
         ))}
       </div>
 
-      <div className="dash-grid animate-up" style={{ '--stagger': 3 }}>
+      <div className="dash-grid" >
         <div className="card">
           <div className="card-header">
             <div className="card-title"><User size={16} /> Manage Users</div>
@@ -642,20 +642,18 @@ function RegisterScreen({ onBack, toast }) {
   return (
     <div id="screen-register" className="auth-screen">
       <div className="auth-brand-panel">
-        <div className="glow glow-1"></div>
-        <div className="glow glow-2"></div>
         <div className="auth-brand-content">
-          <div className="auth-logo animate-up">
+          <div className="auth-logo">
             <div className="auth-logo-icon"><Server /></div>
             <div className="auth-logo-name">BPOMate</div>
           </div>
-          <div className="brand-text-block animate-up" style={{ '--stagger': 2 }}>
-            <div className="auth-brand-headline">Join the<br /><span className="text-gradient">Platform</span></div>
+          <div className="brand-text-block" >
+            <div className="auth-brand-headline">Join the<br />Platform</div>
           </div>
         </div>
       </div>
       <div className="auth-form-panel">
-        <div className="auth-form-inner animate-up" style={{ '--stagger': 1 }}>
+        <div className="auth-form-inner" >
           <h1 className="auth-form-title">Create Account</h1>
           <p className="auth-form-sub">Register to start using BPOMate regulatory tools.</p>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '24px' }}>
@@ -686,8 +684,175 @@ function RegisterScreen({ onBack, toast }) {
 }
 
 // ─── Main App ──────────────────────────────────────────────
+
+
+function IntroScreen({ setScreen }) {
+  const [step, setStep] = useState(0);
+
+  useEffect(() => {
+    const t1 = setTimeout(() => setStep(1), 1500);
+    const t2 = setTimeout(() => setStep(2), 3500);
+    const t3 = setTimeout(() => setStep(3), 5500);
+    const t4 = setTimeout(() => setStep(4), 7000);
+    return () => { clearTimeout(t1); clearTimeout(t2); clearTimeout(t3); clearTimeout(t4); };
+  }, []);
+
+  return (
+    <div className="intro-screen">
+      <div className="intro-content">
+        <div className={`intro-line ${step >= 1 ? 'visible' : ''}`}>
+          <img src="/logo.png" alt="BPOMate Logo" style={{ width: '64px', height: '64px', objectFit: 'contain', borderRadius: '12px', boxShadow: '0 8px 24px rgba(17,186,112,0.4)', marginBottom: '1.5rem', background: 'white' }} />
+          <h1>What is BPOMate?</h1>
+        </div>
+        <div className={`intro-line ${step >= 2 ? 'visible' : ''}`}>
+          <p>An intelligent regulatory compliance engine designed for the Indonesian F&B industry.</p>
+        </div>
+        <div className={`intro-line ${step >= 3 ? 'visible' : ''}`}>
+          <p>Instantly map your product formulations against BPOM regulations and SNI parameters using NLP.</p>
+        </div>
+        <div className={`intro-line ${step >= 4 ? 'visible' : ''}`} style={{ marginTop: '3rem' }}>
+          <button className="btn-primary intro-btn" onClick={() => setScreen('landing')}>
+            Click Here to Start <ArrowRight size={20} />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function LandingPage({ setScreen, user }) {
+  return (
+    <div className="landing-page">
+      <header className="global-header" style={{ position: 'fixed', width: '100%' }}>
+        <div className="header-left">
+          <div className="brand" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.75rem' }} onClick={() => window.scrollTo(0,0)}>
+            <img src="/logo.png" alt="BPOMate Logo" style={{ width: '40px', height: '40px', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(17,186,112,0.4)' }} />
+            <span style={{ fontSize: '1.4rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>BPOMate</span>
+          </div>
+          <nav className="top-nav" style={{ marginLeft: '2rem' }}>
+            <a href="#features" className="nav-link">Features</a>
+            <a href="#how-it-works" className="nav-link">How it Works</a>
+            <a href="#database" className="nav-link">Database</a>
+          </nav>
+        </div>
+        <div className="header-right">
+          {user ? (
+            <button className="btn-primary" onClick={() => setScreen('app')}>Go to Dashboard <ArrowRight size={16} style={{ marginLeft: '8px' }}/></button>
+          ) : (
+            <>
+              <button className="btn-outline" style={{ color: 'white', borderColor: 'rgba(255,255,255,0.3)' }} onClick={() => setScreen('login')}>Log In</button>
+              <button className="btn-primary" onClick={() => setScreen('login')}>Request Demo</button>
+            </>
+          )}
+        </div>
+      </header>
+
+      <main>
+        <section className="hero-section">
+          <div className="hero-content">
+            <div className="pulse-badge" style={{ marginBottom: '2rem', display: 'inline-flex', background: 'rgba(16, 185, 129, 0.15)', borderColor: 'rgba(16, 185, 129, 0.3)', color: '#10b981' }}>
+              <div className="status-dot"></div>
+              BPOM AI Engine v2.0 Live
+            </div>
+            <h1 className="hero-title">Global regulatory compliance <br/><span className="text-gradient">solved.</span></h1>
+            <p className="hero-subtitle">Automate BPOM and SNI compliance mapping with our proprietary AI engine. Save your R&D and QA teams hundreds of hours reading through PDFs.</p>
+            <div className="hero-actions">
+              <button className="btn-primary" style={{ padding: '1.25rem 2.5rem', fontSize: '1.1rem' }} onClick={() => setScreen(user ? 'app' : 'login')}>{user ? 'Go to Dashboard' : 'Get Started'} <ArrowRight size={20} style={{ marginLeft: '8px' }}/></button>
+              <button className="btn-outline" style={{ padding: '1.25rem 2.5rem', fontSize: '1.1rem', background: 'white' }}>View Documentation</button>
+            </div>
+          </div>
+          <div className="hero-visual">
+            <div className="floating-card card-1">
+              <div style={{ fontSize: '0.8rem', color: 'var(--text-dark-muted)', marginBottom: '0.5rem', fontWeight: 600 }}>CONFIDENCE MATCH</div>
+              <div style={{ fontSize: '2.5rem', fontWeight: 800, color: 'var(--taxwire-accent)', lineHeight: 1 }}>98%</div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-dark)' }}>SNI 3141.1:2011 (Dairy)</div>
+            </div>
+            <div className="floating-card card-2">
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.75rem' }}>
+                <CheckCircle size={24} color="var(--taxwire-accent)"/>
+                <span style={{ fontWeight: 700 }}>Regulation Found</span>
+              </div>
+              <div style={{ fontSize: '0.85rem', color: 'var(--text-dark-muted)' }}>PerKa BPOM No. 21/2016 verified against product specs.</div>
+            </div>
+          </div>
+        </section>
+
+        <section className="trusted-section">
+          <p>TRUSTED BY INNOVATIVE FOOD & BEVERAGE BRANDS NATIONWIDE</p>
+          <div className="logo-strip">
+            <div className="mock-logo">Danone</div>
+            <div className="mock-logo">Indofood</div>
+            <div className="mock-logo">Nestlé</div>
+            <div className="mock-logo">Unilever</div>
+            <div className="mock-logo">Mayora</div>
+          </div>
+        </section>
+
+        <section id="features" className="features-section">
+          <div className="feature-grid">
+            <div className="feature-text">
+              <h2 className="section-title">Stop manual searches. <br/>Start building.</h2>
+              <p className="section-desc">BPOMate replaces outdated regulatory binders with a living, intelligent database. Just type your product description and let our AI map the exact SNI standards and BPOM regulations you need to comply with.</p>
+              
+              <div className="feature-list">
+                <div className="feature-item">
+                  <div className="f-icon"><Zap size={20}/></div>
+                  <div>
+                    <h4>Instant AI Mapping</h4>
+                    <p>NLP engine matches your query to 60+ distinct regulatory categories.</p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <div className="f-icon"><Database size={20}/></div>
+                  <div>
+                    <h4>Always Up-to-Date</h4>
+                    <p>Powered by a live PostgreSQL database reflecting the latest BPOM rules.</p>
+                  </div>
+                </div>
+                <div className="feature-item">
+                  <div className="f-icon"><FileText size={20}/></div>
+                  <div>
+                    <h4>Automated Reporting</h4>
+                    <p>Generate PDF parameter sheets instantly for your laboratory.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div className="feature-image">
+              <div className="mock-dashboard">
+                 <div className="mock-header"></div>
+                 <div className="mock-body">
+                    <div className="mock-sidebar"></div>
+                    <div className="mock-content">
+                       <div className="mock-row"></div>
+                       <div className="mock-row half"></div>
+                       <div className="mock-row"></div>
+                    </div>
+                 </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <footer className="global-footer">
+        <div className="footer-content">
+          <div className="brand" style={{ color: 'var(--taxwire-dark)' }}>
+             <Shield size={20} color="var(--taxwire-accent)"/> BPOMate
+          </div>
+          <div className="footer-links">
+            <span>Terms</span>
+            <span>Privacy</span>
+            <span>Contact</span>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+}
+
 export default function App() {
-  const [screen, setScreen] = useState('login');
+  const [screen, setScreen] = useState('intro');
   const [activePage, setActivePage] = useState('dashboard');
   const [user, setUser] = useState(null);
   const [dbData, setDbData] = useState(null);
@@ -740,43 +905,23 @@ export default function App() {
   // Seed history once
   useEffect(() => { History.seed(); }, []);
 
-  // Custom cursor
-  useEffect(() => {
-    const cursor = document.createElement('div'); cursor.className = 'cursor';
-    const follower = document.createElement('div'); follower.className = 'cursor-follower';
-    document.body.appendChild(cursor);
-    document.body.appendChild(follower);
-
-    const onMove = (e) => {
-      cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
-      follower.style.left = e.clientX + 'px'; follower.style.top = e.clientY + 'px';
-    };
-    const onOver = (e) => {
-      if (e.target.closest('button,a,[role="button"],.chip,.cat-card,.nav-link')) {
-        cursor.classList.add('expanded'); follower.classList.add('expanded');
-      }
-    };
-    const onOut = (e) => {
-      if (e.target.closest('button,a,[role="button"],.chip,.cat-card,.nav-link')) {
-        cursor.classList.remove('expanded'); follower.classList.remove('expanded');
-      }
-    };
-    document.addEventListener('mousemove', onMove);
-    document.addEventListener('mouseover', onOver);
-    document.addEventListener('mouseout', onOut);
-    return () => {
-      document.removeEventListener('mousemove', onMove);
-      document.removeEventListener('mouseover', onOver);
-      document.removeEventListener('mouseout', onOut);
-      cursor.remove(); follower.remove();
-    };
-  }, []);
 
   const handleLogin = (role) => {
     setUser({ name: role === 'admin' ? 'Admin BPOMate' : 'Budi Santoso', role });
     setScreen('app');
     setActivePage('dashboard');
   };
+
+
+  // ── Intro Screen ──
+  if (screen === 'intro') {
+    return <IntroScreen setScreen={setScreen} />;
+  }
+
+  // ── Landing Page ──
+  if (screen === 'landing') {
+    return <LandingPage setScreen={setScreen} user={user} />;
+  }
 
   // ── Login Screen ──
   if (screen === 'login') {
@@ -802,20 +947,18 @@ export default function App() {
       <>
         <div id="screen-login" className="auth-screen">
           <div className="auth-brand-panel">
-            <div className="glow glow-1"></div>
-            <div className="glow glow-2"></div>
             <div className="auth-brand-content">
-              <div className="auth-logo animate-up">
+              <div className="auth-logo">
                 <div className="auth-logo-icon"><Server /></div>
                 <div className="auth-logo-name">BPOMate</div>
               </div>
-              <div className="brand-text-block animate-up" style={{ '--stagger': 2 }}>
-                <div className="auth-brand-headline">Regulatory<br /><span className="text-gradient">Intelligence,</span><br />Automated<span className="cursor-blink">|</span></div>
+              <div className="brand-text-block" >
+                <div className="auth-brand-headline">Global regulatory compliance<br />solved.<br /><span style={{ fontSize: '1.25rem', color: '#E2F2EB', fontWeight: 400, marginTop: '1rem', display: 'block' }}>Automate global compliance, saving teams time and money.</span></div>
               </div>
             </div>
           </div>
           <div className="auth-form-panel">
-            <div className="auth-form-inner animate-up" style={{ '--stagger': 1 }}>
+            <div className="auth-form-inner" >
               <h1 className="auth-form-title">Welcome back</h1>
               <p className="auth-form-sub">Enter your details to access your dashboard.</p>
               
@@ -853,66 +996,45 @@ export default function App() {
   return (
     <>
       <div className="app-shell" id="app-shell">
-        <aside className="sidebar" id="sidebar">
-          <div className="sidebar-brand">
-            <div className="brand-icon"><Shield /></div>
-            <div className="brand-name">BPOMate</div>
+        <header className="global-header">
+          <div className="header-left">
+            <div className="brand" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <img src="/logo.png" alt="BPOMate Logo" style={{ width: '36px', height: '36px', objectFit: 'contain', borderRadius: '8px', boxShadow: '0 4px 12px rgba(17,186,112,0.4)' }} />
+              <span style={{ fontSize: '1.25rem', fontWeight: 800, letterSpacing: '-0.03em', color: 'white' }}>BPOMate</span>
+            </div>
+            <nav className="top-nav">
+              <button className={`nav-link ${activePage === 'dashboard' ? 'active' : ''}`} onClick={() => setActivePage('dashboard')}>Dashboard</button>
+              <button className={`nav-link ${activePage === 'history' ? 'active' : ''}`} onClick={() => setActivePage('history')}>Audit Log</button>
+              <button className={`nav-link ${activePage === 'database' ? 'active' : ''}`} onClick={() => setActivePage('database')}>Regulatory DB</button>
+              {user?.role === 'admin' && (
+                <button className={`nav-link ${activePage === 'admin' ? 'active' : ''}`} onClick={() => setActivePage('admin')}>Admin</button>
+              )}
+            </nav>
           </div>
-          <nav className="sidebar-nav">
-            <div className="nav-group-label">Analysis</div>
-            <div className="nav-items-container">
-              <button className={`nav-link ${activePage === 'dashboard' ? 'active' : ''}`} onClick={() => setActivePage('dashboard')}><LayoutDashboard size={15} /> Dashboard</button>
-              <button className={`nav-link ${activePage === 'history' ? 'active' : ''}`} onClick={() => setActivePage('history')}><Clock size={15} /> Audit Log</button>
+          
+          <div className="header-right">
+            <div className="status-pill pulse-badge">
+              <div className="status-dot"></div>
+              System Online
             </div>
-            <div className="nav-group-label">Knowledge</div>
-            <div className="nav-items-container">
-              <button className={`nav-link ${activePage === 'database' ? 'active' : ''}`} onClick={() => setActivePage('database')}>
-                <Database size={15} /> Regulatory DB
-              </button>
-            </div>
-            {user?.role === 'admin' && (
-              <div id="admin-nav-group">
-                <div className="nav-group-label">System</div>
-                <div className="nav-items-container">
-                  <button className={`nav-link ${activePage === 'admin' ? 'active' : ''}`} onClick={() => setActivePage('admin')}>
-                    <Settings size={15} /> Admin Panel
-                  </button>
-                </div>
+            <div className="user-controls">
+              <div className="user-avatar" title={user?.name}>
+                {user?.name?.charAt(0).toUpperCase()}
               </div>
-            )}
-          </nav>
-          <div className="sidebar-user">
-            <div className="user-avatar"><User size={16} /></div>
-            <div className="user-info">
-              <div className="user-name">{user?.name}</div>
-              <div className="user-role">{user?.role}</div>
+              <button className="btn-logout" onClick={() => setScreen('login')}>Sign out</button>
             </div>
-            <button className="btn-icon" onClick={() => setScreen('login')} title="Sign out">✖</button>
           </div>
-        </aside>
+        </header>
 
         <main className="main-content">
-          <div className="top-header">
-            <div className="header-breadcrumb">
-              <span className="breadcrumb-parent">BPOMate</span>
-              <ArrowRight size={12} style={{ margin: '0 8px' }} />
-              <span className="breadcrumb-current">{PAGE_LABELS[activePage]}</span>
-            </div>
-            <div className="header-right">
-              <div className="status-pill pulse-badge">
-                <div className="status-dot"></div>
-                System Online
-              </div>
-            </div>
-          </div>
           <div className="page-body">
             {loadingDb ? (
-              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '16px', color: 'var(--text-muted)' }}>
-                <Loader2 className="spinner" size={32} />
-                <p>Loading database from PostgreSQL...</p>
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '400px', flexDirection: 'column', gap: '16px', color: 'var(--text-dark-muted)' }}>
+                <Loader2 className="spinner" size={40} />
+                <p style={{ fontWeight: 600 }}>Loading PostgreSQL database...</p>
               </div>
             ) : (
-              <div className="page active" style={{ padding: '2rem' }}>
+              <div className="page active">
                 {activePage === 'dashboard' && <DashboardPage user={user} toast={toast} db={dbData} />}
                 {activePage === 'history' && <HistoryPage />}
                 {activePage === 'database' && <DatabasePage db={dbData} />}

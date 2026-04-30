@@ -1178,6 +1178,627 @@ const BPOM_DB = {
         { name: 'Pseudomonas aeruginosa', unit: 'per 1g/mL', limit: 'Negative', method: 'ISO 22717', type: 'mandatory', group: 'Microbiological' }
       ]
     }
+    ,{
+      id: 'canned_fruits',
+      name: 'Canned Fruits',
+      description: 'Fruits preserved in syrup or juice in cans',
+      icon: 'apple',
+      color: '#F59E0B',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['canned fruit', 'peach', 'pineapple', 'syrup'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'canned_vegetables',
+      name: 'Canned Vegetables',
+      description: 'Vegetables preserved in brine or water',
+      icon: 'carrot',
+      color: '#60A5FA',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['canned vegetable', 'peas', 'corn', 'beans'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'canned_meat',
+      name: 'Canned Meat',
+      description: 'Meat products sterilized in cans',
+      icon: 'beef',
+      color: '#34D399',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['canned meat', 'corned beef', 'spam'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'dried_fruits',
+      name: 'Dried Fruits',
+      description: 'Dehydrated fruits like raisins, dates, apricots',
+      icon: 'apple',
+      color: '#FB923C',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['dried fruit', 'raisin', 'dates', 'prunes'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'dried_vegetables',
+      name: 'Dried Vegetables',
+      description: 'Dehydrated vegetables and mushrooms',
+      icon: 'carrot',
+      color: '#F87171',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['dried vegetable', 'mushroom', 'seaweed'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'dried_fish',
+      name: 'Dried Fish',
+      description: 'Salted and dried fish products',
+      icon: 'fish',
+      color: '#A78BFA',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['dried fish', 'ikan asin', 'anchovy'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'smoked_fish',
+      name: 'Smoked Fish',
+      description: 'Fish preserved by smoking',
+      icon: 'fish',
+      color: '#E879F9',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['smoked fish', 'ikan asap', 'salmon'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'processed_nuts',
+      name: 'Processed Nuts & Seeds',
+      description: 'Roasted, salted, or flavored nuts',
+      icon: 'nut_off',
+      color: '#2DD4BF',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['nut', 'peanut', 'almond', 'cashew'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'jams_jellies',
+      name: 'Jams & Jellies',
+      description: 'Fruit preserves, jams, marmalades',
+      icon: 'droplet',
+      color: '#FCD34D',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['jam', 'jelly', 'marmalade', 'selai'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'chocolate_products',
+      name: 'Chocolate Products',
+      description: 'Milk, dark, and white chocolate bars',
+      icon: 'box',
+      color: '#86EFAC',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['chocolate', 'cokelat', 'dark chocolate'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'cocoa_powder',
+      name: 'Cocoa Powder',
+      description: 'Processed cocoa powder for baking or drinking',
+      icon: 'coffee',
+      color: '#38BDF8',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['cocoa powder', 'bubuk cokelat'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'coffee_beans',
+      name: 'Coffee Beans & Ground',
+      description: 'Roasted coffee beans and ground coffee',
+      icon: 'coffee',
+      color: '#C084FC',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['coffee', 'kopi', 'roasted bean'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'tea_leaves',
+      name: 'Tea Leaves',
+      description: 'Black, green, oolong, and herbal teas',
+      icon: 'leaf',
+      color: '#F472B6',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['tea', 'teh', 'green tea', 'black tea'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'plant_based_milks',
+      name: 'Plant-Based Milks',
+      description: 'Soy milk, almond milk, oat milk',
+      icon: 'milk',
+      color: '#FBBF24',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['soy milk', 'almond milk', 'oat milk', 'susu kedelai'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'condensed_milk',
+      name: 'Condensed Milk',
+      description: 'Sweetened condensed milk and evaporated milk',
+      icon: 'milk',
+      color: '#A1A1AA',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['condensed milk', 'susu kental manis'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'cheese_hard',
+      name: 'Hard Cheeses',
+      description: 'Cheddar, parmesan, gouda cheeses',
+      icon: 'cheese',
+      color: '#F59E0B',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['cheese', 'keju', 'cheddar', 'parmesan'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'cheese_soft',
+      name: 'Soft Cheeses',
+      description: 'Mozzarella, brie, cream cheese',
+      icon: 'cheese',
+      color: '#60A5FA',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['soft cheese', 'mozzarella', 'cream cheese'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'butter_ghee',
+      name: 'Butter & Ghee',
+      description: 'Dairy butter and clarified butter',
+      icon: 'box',
+      color: '#34D399',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['butter', 'mentega', 'ghee'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'margarine_spreads',
+      name: 'Margarine & Spreads',
+      description: 'Plant-based spreads and margarine',
+      icon: 'box',
+      color: '#FB923C',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['margarine', 'margarin', 'spread'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'mayonnaise_dressings',
+      name: 'Mayonnaise & Dressings',
+      description: 'Salad dressings and mayonnaise',
+      icon: 'droplet',
+      color: '#F87171',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['mayonnaise', 'dressing', 'salad dressing'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'mustard_relishes',
+      name: 'Mustard & Relishes',
+      description: 'Mustard paste and pickle relishes',
+      icon: 'droplet',
+      color: '#A78BFA',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['mustard', 'relish'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'table_salt',
+      name: 'Table Salt',
+      description: 'Iodized table salt and sea salt',
+      icon: 'box',
+      color: '#E879F9',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['salt', 'garam', 'sea salt'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'vinegar',
+      name: 'Vinegar Products',
+      description: 'Apple cider, white, and balsamic vinegar',
+      icon: 'flask-conical',
+      color: '#2DD4BF',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['vinegar', 'cuka', 'balsamic'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'soy_products',
+      name: 'Processed Soy Products',
+      description: 'Tofu, soy meat, textured vegetable protein',
+      icon: 'box',
+      color: '#FCD34D',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['tofu', 'tahu', 'tvp', 'soy meat'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'energy_bars',
+      name: 'Energy & Protein Bars',
+      description: 'Fortified snack bars',
+      icon: 'zap',
+      color: '#86EFAC',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['energy bar', 'protein bar', 'snack bar'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'protein_powders',
+      name: 'Protein Powders',
+      description: 'Whey, soy, and pea protein isolates',
+      icon: 'activity',
+      color: '#38BDF8',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['protein powder', 'whey', 'isolate'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
+    ,{
+      id: 'pastries_cakes',
+      name: 'Pastries & Cakes',
+      description: 'Freshly baked cakes, croissants, and pastries',
+      icon: 'star',
+      color: '#C084FC',
+      colorLight: 'rgba(200,200,200,0.1)',
+      active: true,
+      keywords: {
+        high: ['cake', 'pastry', 'croissant', 'pie'],
+        medium: ['processed', 'food', 'product'],
+        low: ['edible', 'consumable']
+      },
+      regulations: [
+        { code: 'SNI General', title: 'Syarat Mutu Umum' },
+        { code: 'PerKa BPOM No. 5/2018', title: 'Cemaran Logam Berat' }
+      ],
+      parameters: [
+        { name: 'Moisture', unit: '%', limit: 'Report', method: 'Gravimetric', type: 'mandatory', group: 'Physical' },
+        { name: 'Lead (Pb)', unit: 'mg/kg', limit: '0.5', method: 'ICP-MS', type: 'mandatory', group: 'Heavy Metals' },
+        { name: 'TPC', unit: 'CFU/g', limit: '1x10^5', method: 'Plate Count', type: 'mandatory', group: 'Microbiological' }
+      ]
+    }
   ]
 };
 

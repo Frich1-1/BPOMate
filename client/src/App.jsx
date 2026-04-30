@@ -1,63 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
-import { Settings, Shield, Server, ArrowRight, User, Zap, Database, Clock, LayoutDashboard } from 'lucide-react';
-import BPOM_DB from './regulations.js';
+import { Settings, Shield, Server, ArrowRight, User, Zap, Database, Clock, LayoutDashboard, FileText, UserPlus, Trash2, BarChart3, Loader2 } from 'lucide-react';
+import { jsPDF } from 'jspdf';
 
-// ─── BPOM_DB is imported directly as an ES module ───────────
+// ─── API Config ────────────────────────────────────────────
+const API_URL = 'http://localhost:5000/api';
 
-// ─── NLP Engine ────────────────────────────────────────────
-class NLPEngine {
-  constructor(db) { this.db = db; }
-  classify(rawText) {
-    if (!rawText || rawText.trim().length < 5) return null;
-    const text = rawText.toLowerCase().replace(/[^a-z0-9\s\-\/]/g, ' ').replace(/\s+/g, ' ').trim();
-    const scores = {};
-    for (const cat of this.db.categories) {
-      if (!cat.active) continue;
-      let score = 0;
-      for (const kw of (cat.keywords.high || [])) { if (text.includes(kw)) score += 10; }
-      for (const kw of (cat.keywords.medium || [])) { if (text.includes(kw)) score += 5; }
-      for (const kw of (cat.keywords.low || [])) { if (text.includes(kw)) score += 2; }
-      scores[cat.id] = score;
-    }
-    const ranked = Object.entries(scores).sort(([, a], [, b]) => b - a).filter(([, s]) => s > 0);
-    if (!ranked.length) return null;
-    const [[topId, topScore], [, secondScore] = [null, 0]] = ranked;
-    const conf = this._confidence(topScore, secondScore);
-    const level = conf >= 82 ? 'high' : conf >= 58 ? 'medium' : 'low';
-    const validMatches = ranked.filter(([, score]) => score >= topScore * 0.75);
-    let topCategory;
-    if (validMatches.length > 1) {
-      const firstCat = this.db.categories.find(c => c.id === validMatches[0][0]);
-      let compositeParams = [], compositeRegs = [], names = [];
-      validMatches.forEach(([id]) => {
-        const cat = this.db.categories.find(c => c.id === id);
-        names.push(cat.name);
-        cat.regulations.forEach(r => { if (!compositeRegs.find(x => x.code === r.code)) compositeRegs.push(r); });
-        cat.parameters.forEach(p => { if (!compositeParams.find(x => x.name === p.name)) compositeParams.push(p); });
-      });
-      topCategory = {
-        id: validMatches.map(([id]) => id).join('_'),
-        name: names.join(' + '),
-        description: 'Composite classification spanning multiple BPOM regulatory categories.',
-        icon: firstCat.icon, color: firstCat.color, colorLight: firstCat.colorLight,
-        active: true, keywords: {}, regulations: compositeRegs, parameters: compositeParams
-      };
-    } else {
-      topCategory = this.db.categories.find(c => c.id === topId);
-    }
-    return {
-      topCategory, confidence: conf, level,
-      alternatives: ranked.slice(validMatches.length, validMatches.length + 3)
-        .map(([id]) => this.db.categories.find(c => c.id === id)).filter(Boolean)
-    };
-  }
-  _confidence(top, second) {
-    if (!top) return 0;
-    const base = Math.min(top * 3.8, 100);
-    const margin = second > 0 ? (top - second) / top : 1;
-    return Math.min(Math.round(base * (0.6 + 0.4 * margin)), 99);
-  }
-}
+// Note: NLPEngine logic has been moved to the Node.js backend using the 'natural' package 
+// for stemming, tokenization, and fuzzy Jaro-Winkler distance matching.
 
 // ─── Helpers ───────────────────────────────────────────────
 const CATEGORY_EMOJI = {
@@ -80,6 +29,52 @@ const fmtDate = (iso) => {
 const ago = (n, unit) => {
   const ms = unit === 'd' ? 86400000 : 3600000;
   return new Date(Date.now() - n * ms).toISOString();
+};
+
+// ─── PDF Export ────────────────────────────────────────────
+const exportPDF = (resultData) => {
+  const { result: res, query, ts } = resultData;
+  const cat = res.topCategory;
+  const doc = new jsPDF();
+  doc.setFontSize(20); doc.setTextColor(124, 58, 237);
+  doc.text('BPOMate — Regulatory Report', 14, 22);
+  doc.setFontSize(9); doc.setTextColor(120, 120, 120);
+  doc.text('Generated: ' + fmtDate(new Date().toISOString()), 14, 30);
+  doc.text('Analysis ID: ' + resultData.id, 14, 35);
+  doc.setDrawColor(200); doc.line(14, 40, 196, 40);
+  doc.setFontSize(11); doc.setTextColor(40, 40, 40);
+  doc.text('Product Description:', 14, 48);
+  doc.setFontSize(10); doc.setTextColor(80, 80, 80);
+  const qLines = doc.splitTextToSize(query, 170);
+  doc.text(qLines, 14, 55);
+  let y = 55 + qLines.length * 5 + 8;
+  doc.setFontSize(11); doc.setTextColor(40, 40, 40);
+  doc.text('Category: ' + cat.name, 14, y); y += 7;
+  doc.text('Confidence: ' + res.confidence + '% (' + res.level + ')', 14, y); y += 7;
+  doc.text('Regulations: ' + cat.regulations.map(r => r.code).join(', '), 14, y); y += 10;
+  doc.setDrawColor(200); doc.line(14, y, 196, y); y += 8;
+  doc.setFontSize(12); doc.setTextColor(124, 58, 237);
+  doc.text('Test Parameters (' + cat.parameters.length + ')', 14, y); y += 8;
+  doc.setFontSize(8); doc.setTextColor(255, 255, 255);
+  doc.setFillColor(124, 58, 237); doc.rect(14, y - 4, 182, 7, 'F');
+  doc.text('#', 16, y); doc.text('Parameter', 24, y); doc.text('Limit', 100, y); doc.text('Method', 135, y); doc.text('Type', 180, y); y += 6;
+  doc.setFontSize(7.5);
+  cat.parameters.forEach((p, i) => {
+    if (y > 275) { doc.addPage(); y = 20; }
+    const bg = i % 2 === 0 ? 245 : 255;
+    doc.setFillColor(bg, bg, bg); doc.rect(14, y - 3.5, 182, 6, 'F');
+    doc.setTextColor(80, 80, 80);
+    doc.text(String(i + 1), 16, y);
+    doc.text(p.name.substring(0, 40), 24, y);
+    doc.text((p.limit + ' ' + p.unit).substring(0, 25), 100, y);
+    doc.text(p.method.substring(0, 30), 135, y);
+    doc.setTextColor(p.type === 'mandatory' ? 34 : 245, p.type === 'mandatory' ? 197 : 158, p.type === 'mandatory' ? 94 : 11);
+    doc.text(p.type, 180, y); y += 6;
+  });
+  y += 5; doc.setDrawColor(200); doc.line(14, y, 196, y); y += 6;
+  doc.setFontSize(7); doc.setTextColor(150, 150, 150);
+  doc.text('This report was auto-generated by BPOMate NLP Engine. For official compliance, verify with BPOM RI.', 14, y);
+  doc.save('BPOMate_Report_' + cat.id + '_' + Date.now() + '.pdf');
 };
 
 // ─── History (localStorage) ────────────────────────────────
@@ -108,6 +103,23 @@ const EXAMPLES = [
   { label: '💊 Vit C Capsule', text: 'Vitamin C supplement 500mg with zinc, for adults, 30 capsules' },
   { label: '🍜 Instant Noodles', text: 'Instant fried noodles with chicken flavor seasoning, 85g' },
 ];
+
+// ─── Users (localStorage) ─────────────────────────────────
+const Users = {
+  KEY: 'bpomate_users',
+  defaults: [
+    { id: 'u1', name: 'Admin BPOMate', email: 'admin@bpomate.id', role: 'admin', password: 'password123', created: new Date().toISOString() },
+    { id: 'u2', name: 'Budi Santoso', email: 'budi@lab.co.id', role: 'user', password: 'password123', created: new Date().toISOString() },
+  ],
+  getAll() {
+    try { const d = JSON.parse(localStorage.getItem(this.KEY)); return d && d.length ? d : this.defaults; }
+    catch { return this.defaults; }
+  },
+  save(users) { try { localStorage.setItem(this.KEY, JSON.stringify(users)); } catch {} },
+  add(user) { const all = this.getAll(); all.push({ ...user, id: 'u' + Date.now(), created: new Date().toISOString() }); this.save(all); return all; },
+  remove(id) { const all = this.getAll().filter(u => u.id !== id); this.save(all); return all; },
+  findByEmail(email) { return this.getAll().find(u => u.email.toLowerCase() === email.toLowerCase()); },
+};
 
 // ─── Toast ─────────────────────────────────────────────────
 function useToast() {
@@ -166,9 +178,7 @@ function Modal({ cat, onClose }) {
 }
 
 // ─── Dashboard Page ────────────────────────────────────────
-function DashboardPage({ user, toast }) {
-  const db = BPOM_DB;
-  const nlp = db ? new NLPEngine(db) : null;
+function DashboardPage({ user, toast, db }) {
   const [query, setQuery] = useState('');
   const [result, setResult] = useState(null);
   const [analyzing, setAnalyzing] = useState(false);
@@ -183,25 +193,48 @@ function DashboardPage({ user, toast }) {
   ];
 
   const runAnalysis = async () => {
-    if (!nlp) { toast('Database not loaded', 'error'); return; }
+    if (!db) { toast('Database not loaded', 'error'); return; }
     if (query.trim().length < 8) { toast('Please enter a longer product description.', 'error'); return; }
     setAnalyzing(true); setResult(null);
-    for (let i = 1; i <= 4; i++) {
-      setPipeStep(i);
-      await new Promise(r => setTimeout(r, 420));
+
+    // Start pipeline animation
+    const interval = setInterval(() => {
+      setPipeStep(p => p < 4 ? p + 1 : p);
+    }, 420);
+
+    try {
+      const response = await fetch(`${API_URL}/analyze`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query })
+      });
+      
+      const data = await response.json();
+      
+      clearInterval(interval);
+      setPipeStep(0); setAnalyzing(false);
+
+      if (!data.result) { 
+        toast('No BPOM category match found. Try refining the description.', 'error'); 
+        return; 
+      }
+
+      const res = data.result;
+      const entry = {
+        id: 'q' + Date.now(), ts: new Date().toISOString(), query,
+        categoryId: res.topCategory.id, categoryName: res.topCategory.name,
+        confidence: res.confidence, level: res.level,
+        paramCount: res.topCategory.parameters.length, status: 'pending', user: user?.name || 'Automated'
+      };
+      History.save(entry);
+      setResult({ query, result: res, ts: entry.ts, id: entry.id });
+      toast(`Mapped to "${res.topCategory.name}"`, 'success');
+
+    } catch (err) {
+      clearInterval(interval);
+      setPipeStep(0); setAnalyzing(false);
+      toast('Error communicating with AI engine', 'error');
     }
-    const res = nlp.classify(query);
-    setPipeStep(0); setAnalyzing(false);
-    if (!res) { toast('No BPOM category match found. Try refining the description.', 'error'); return; }
-    const entry = {
-      id: 'q' + Date.now(), ts: new Date().toISOString(), query,
-      categoryId: res.topCategory.id, categoryName: res.topCategory.name,
-      confidence: res.confidence, level: res.level,
-      paramCount: res.topCategory.parameters.length, status: 'pending', user: user?.name || 'Automated'
-    };
-    History.save(entry);
-    setResult({ query, result: res, ts: entry.ts, id: entry.id });
-    toast(`Mapped to "${res.topCategory.name}"`, 'success');
   };
 
   const copyParams = () => {
@@ -304,7 +337,7 @@ function DashboardPage({ user, toast }) {
 
           {result && !analyzing && (
             <div className="result-shown show">
-              <ResultCard result={result} onCopy={copyParams} />
+              <ResultCard result={result} onCopy={copyParams} onExportPDF={() => exportPDF(result)} />
             </div>
           )}
         </div>
@@ -313,7 +346,7 @@ function DashboardPage({ user, toast }) {
   );
 }
 
-function ResultCard({ result, onCopy }) {
+function ResultCard({ result, onCopy, onExportPDF }) {
   const { result: res, query, ts } = result;
   const cat = res.topCategory;
   const confCls = res.level;
@@ -348,6 +381,9 @@ function ResultCard({ result, onCopy }) {
 
       <div className="result-actions-row">
         <button className="btn-outline btn-sm" onClick={onCopy}>Copy List</button>
+        <button className="btn-outline btn-sm" onClick={onExportPDF} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+          <FileText size={14} /> Export PDF
+        </button>
       </div>
 
       <div className="meta-row">
@@ -440,8 +476,7 @@ function HistoryPage() {
 }
 
 // ─── Database Page ─────────────────────────────────────────
-function DatabasePage() {
-  const db = BPOM_DB;
+function DatabasePage({ db }) {
   const [modalCat, setModalCat] = useState(null);
   if (!db) return <div style={{ padding: '2rem', color: 'var(--text-muted)' }}>Database not loaded.</div>;
 
@@ -472,11 +507,34 @@ function DatabasePage() {
 }
 
 // ─── Admin Page ────────────────────────────────────────────
-function AdminPage({ toast }) {
-  const db = BPOM_DB;
-  const users = [
-    { name: 'Admin BPOMate', role: 'admin' },
-    { name: 'Budi Santoso', role: 'user' },
+function AdminPage({ toast, db, onToggleCategory }) {
+  const [users, setUsers] = useState(Users.getAll());
+  const [showAddUser, setShowAddUser] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newRole, setNewRole] = useState('user');
+  const hist = History.getAll();
+
+  const handleAddUser = () => {
+    if (!newName.trim() || !newEmail.trim()) { toast('Name and email are required', 'error'); return; }
+    if (Users.findByEmail(newEmail)) { toast('Email already registered', 'error'); return; }
+    const updated = Users.add({ name: newName, email: newEmail, role: newRole });
+    setUsers(updated);
+    setNewName(''); setNewEmail(''); setNewRole('user'); setShowAddUser(false);
+    toast(`User "${newName}" added`, 'success');
+  };
+
+  const handleDeleteUser = (id, name) => {
+    const updated = Users.remove(id);
+    setUsers(updated);
+    toast(`User "${name}" removed`, 'info');
+  };
+
+  const sysStats = [
+    { l: 'Total Queries', v: hist.length, s: 'All time' },
+    { l: 'Active Categories', v: db ? db.categories.filter(c => c.active).length : 0, s: 'In database' },
+    { l: 'Total Parameters', v: db ? db.categories.reduce((a, c) => a + c.parameters.length, 0) : 0, s: 'Across all' },
+    { l: 'Registered Users', v: users.length, s: 'In system' },
   ];
 
   return (
@@ -485,17 +543,54 @@ function AdminPage({ toast }) {
         <h1 className="page-title">Admin Controller</h1>
         <p className="page-subtitle">System configuration, users, and mapping toggle rules.</p>
       </div>
-      <div className="dash-grid animate-up" style={{ '--stagger': 2 }}>
+
+      <div className="stats-row animate-up" style={{ '--stagger': 2 }}>
+        {sysStats.map((st, i) => (
+          <div key={i} className="stat-card">
+            <div className="stat-label">{st.l}</div>
+            <div className="stat-value">{st.v}</div>
+            <div className="stat-sub">{st.s}</div>
+          </div>
+        ))}
+      </div>
+
+      <div className="dash-grid animate-up" style={{ '--stagger': 3 }}>
         <div className="card">
-          <div className="card-header"><div className="card-title">Registered Users</div></div>
+          <div className="card-header">
+            <div className="card-title"><User size={16} /> Manage Users</div>
+            <button className="btn-outline btn-sm" onClick={() => setShowAddUser(!showAddUser)} style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+              <UserPlus size={14} /> Add User
+            </button>
+          </div>
+          {showAddUser && (
+            <div className="card-body" style={{ borderBottom: '1px solid var(--border)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', marginBottom: '12px' }}>
+                <input className="form-control" placeholder="Full Name" value={newName} onChange={e => setNewName(e.target.value)} />
+                <input className="form-control" placeholder="Email" value={newEmail} onChange={e => setNewEmail(e.target.value)} />
+              </div>
+              <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                <select className="form-control" value={newRole} onChange={e => setNewRole(e.target.value)} style={{ width: 'auto' }}>
+                  <option value="user">Staff</option>
+                  <option value="admin">Admin</option>
+                </select>
+                <button className="btn-primary btn-sm" onClick={handleAddUser}>Save User</button>
+              </div>
+            </div>
+          )}
           <div className="table-wrap">
             <table>
-              <thead><tr><th>Name</th><th>Role</th></tr></thead>
+              <thead><tr><th>Name</th><th>Email</th><th>Role</th><th style={{ width: '60px' }}>Action</th></tr></thead>
               <tbody>
-                {users.map((u, i) => (
-                  <tr key={i}>
+                {users.map(u => (
+                  <tr key={u.id}>
                     <td className="td-primary">{u.name}</td>
+                    <td style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>{u.email}</td>
                     <td><span className={`badge ${u.role === 'admin' ? 'badge-blue' : 'badge-grey'}`}>{u.role}</span></td>
+                    <td>
+                      <button className="btn-icon" onClick={() => handleDeleteUser(u.id, u.name)} title="Remove user" style={{ color: 'var(--danger-text)' }}>
+                        <Trash2 size={14} />
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -513,7 +608,7 @@ function AdminPage({ toast }) {
                     <td className="td-primary">{c.name}</td>
                     <td>
                       <label className="toggle-switch">
-                        <input type="checkbox" defaultChecked={c.active} onChange={() => toast(`${c.name} updated`, 'info')} />
+                        <input type="checkbox" checked={c.active} onChange={() => onToggleCategory(c.id, !c.active)} />
                         <div className="toggle-track"></div>
                       </label>
                     </td>
@@ -528,12 +623,119 @@ function AdminPage({ toast }) {
   );
 }
 
+// ─── Register Screen Component ───────────────────────────
+function RegisterScreen({ onBack, toast }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [role, setRole] = useState('user');
+
+  const handleRegister = () => {
+    if (!name.trim() || !email.trim() || !password.trim()) { toast('All fields are required', 'error'); return; }
+    if (password.length < 6) { toast('Password must be at least 6 characters', 'error'); return; }
+    if (Users.findByEmail(email)) { toast('Email already registered', 'error'); return; }
+    Users.add({ name, email, role, password });
+    toast('Account created! Please sign in.', 'success');
+    onBack();
+  };
+
+  return (
+    <div id="screen-register" className="auth-screen">
+      <div className="auth-brand-panel">
+        <div className="glow glow-1"></div>
+        <div className="glow glow-2"></div>
+        <div className="auth-brand-content">
+          <div className="auth-logo animate-up">
+            <div className="auth-logo-icon"><Server /></div>
+            <div className="auth-logo-name">BPOMate</div>
+          </div>
+          <div className="brand-text-block animate-up" style={{ '--stagger': 2 }}>
+            <div className="auth-brand-headline">Join the<br /><span className="text-gradient">Platform</span></div>
+          </div>
+        </div>
+      </div>
+      <div className="auth-form-panel">
+        <div className="auth-form-inner animate-up" style={{ '--stagger': 1 }}>
+          <h1 className="auth-form-title">Create Account</h1>
+          <p className="auth-form-sub">Register to start using BPOMate regulatory tools.</p>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '24px' }}>
+            <input className="form-control" placeholder="Full Name" value={name} onChange={e => setName(e.target.value)} />
+            <input className="form-control" type="email" placeholder="Email Address" value={email} onChange={e => setEmail(e.target.value)} />
+            <input className="form-control" type="password" placeholder="Password (min 6 chars)" value={password} onChange={e => setPassword(e.target.value)} />
+            <div className="role-cards">
+              <div className={`role-card ${role === 'user' ? 'selected' : ''}`} onClick={() => setRole('user')}>
+                <div className="role-card-icon">👤</div>
+                <div className="role-card-name">Staff</div>
+                <div className="role-card-desc">Standard access to analysis tools</div>
+              </div>
+              <div className={`role-card ${role === 'admin' ? 'selected' : ''}`} onClick={() => setRole('admin')}>
+                <div className="role-card-icon">🔐</div>
+                <div className="role-card-name">Admin</div>
+                <div className="role-card-desc">Full system control & user management</div>
+              </div>
+            </div>
+            <button className="btn-primary w-full btn-lg" onClick={handleRegister}>Create Account</button>
+          </div>
+          <div className="auth-switch" style={{ marginTop: '20px' }}>
+            Already have an account? <a style={{ cursor: 'pointer' }} onClick={onBack}>Sign in</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main App ──────────────────────────────────────────────
 export default function App() {
   const [screen, setScreen] = useState('login');
   const [activePage, setActivePage] = useState('dashboard');
   const [user, setUser] = useState(null);
+  const [dbData, setDbData] = useState(null);
+  const [loadingDb, setLoadingDb] = useState(true);
   const { toasts, show: toast } = useToast();
+
+  // Load database from PostgreSQL backend
+  useEffect(() => {
+    fetch(`${API_URL}/database`)
+      .then(res => res.json())
+      .then(data => {
+        setDbData(data);
+        setLoadingDb(false);
+      })
+      .catch(err => {
+        console.error('Failed to load database from API:', err);
+        toast('Failed to load PostgreSQL database. Is the server running?', 'error');
+        setLoadingDb(false);
+      });
+  }, []);
+
+  const handleToggleCategory = async (id, newActiveStatus) => {
+    // Optimistic UI update
+    setDbData(prev => ({
+      ...prev,
+      categories: prev.categories.map(c => c.id === id ? { ...c, active: newActiveStatus } : c)
+    }));
+
+    // Save to PostgreSQL backend
+    try {
+      const res = await fetch(`${API_URL}/categories/${id}/toggle`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ active: newActiveStatus })
+      });
+      if (!res.ok) throw new Error('Update failed');
+      const data = await res.json();
+      toast(`${data.name} is now ${data.active ? 'Active' : 'Draft'} in Database`, 'info');
+    } catch (err) {
+      console.error(err);
+      toast('Failed to save toggle to database', 'error');
+      // Revert optimistic update
+      setDbData(prev => ({
+        ...prev,
+        categories: prev.categories.map(c => c.id === id ? { ...c, active: !newActiveStatus } : c)
+      }));
+    }
+  };
 
   // Seed history once
   useEffect(() => { History.seed(); }, []);
@@ -578,6 +780,24 @@ export default function App() {
 
   // ── Login Screen ──
   if (screen === 'login') {
+    const handleLoginSubmit = (e) => {
+      e.preventDefault();
+      const email = e.target.email.value;
+      const pass = e.target.password.value;
+      if (!email || !pass) { toast('Please enter email and password', 'error'); return; }
+      
+      const foundUser = Users.findByEmail(email);
+      if (!foundUser || foundUser.password !== pass) {
+        toast('Invalid email or password', 'error');
+        return;
+      }
+      
+      setUser(foundUser);
+      setScreen('app');
+      setActivePage('dashboard');
+      toast(`Welcome back, ${foundUser.name}!`, 'success');
+    };
+
     return (
       <>
         <div id="screen-login" className="auth-screen">
@@ -598,14 +818,13 @@ export default function App() {
             <div className="auth-form-inner animate-up" style={{ '--stagger': 1 }}>
               <h1 className="auth-form-title">Welcome back</h1>
               <p className="auth-form-sub">Enter your details to access your dashboard.</p>
-              <div className="demo-buttons" style={{ marginTop: '30px' }}>
-                <button className="btn-outline w-full" onClick={() => handleLogin('admin')}>
-                  <span className="emoji">🔐</span> Admin Demo
-                </button>
-                <button className="btn-outline w-full" onClick={() => handleLogin('user')}>
-                  <span className="emoji">👤</span> Staff Demo
-                </button>
-              </div>
+              
+              <form onSubmit={handleLoginSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '24px' }}>
+                <input name="email" className="form-control" type="email" placeholder="Email Address" defaultValue="admin@bpomate.id" />
+                <input name="password" className="form-control" type="password" placeholder="Password" defaultValue="password123" />
+                <button type="submit" className="btn-primary w-full btn-lg">Sign In</button>
+              </form>
+
               <div className="auth-switch" style={{ marginTop: '20px' }}>
                 Don't have an account? <a style={{ cursor: 'pointer' }} onClick={() => setScreen('register')}>Sign up</a>
               </div>
@@ -621,23 +840,7 @@ export default function App() {
   if (screen === 'register') {
     return (
       <>
-        <div id="screen-register" className="auth-screen">
-          <div className="auth-brand-panel">
-            <div className="glow glow-1"></div>
-            <div className="auth-brand-content">
-              <div className="auth-logo animate-up">
-                <div className="auth-logo-icon"><Server /></div>
-                <div className="auth-logo-name">BPOMate</div>
-              </div>
-            </div>
-          </div>
-          <div className="auth-form-panel">
-            <div className="auth-form-inner animate-up">
-              <h1 className="auth-form-title">Create Account</h1>
-              <button className="btn-primary w-full btn-lg" onClick={() => setScreen('login')}>Back to Login</button>
-            </div>
-          </div>
-        </div>
+        <RegisterScreen onBack={() => setScreen('login')} toast={toast} />
         <ToastWrap toasts={toasts} />
       </>
     );
@@ -703,12 +906,19 @@ export default function App() {
             </div>
           </div>
           <div className="page-body">
-            <div className="page active" style={{ padding: '2rem' }}>
-              {activePage === 'dashboard' && <DashboardPage user={user} toast={toast} />}
-              {activePage === 'history' && <HistoryPage />}
-              {activePage === 'database' && <DatabasePage />}
-              {activePage === 'admin' && <AdminPage toast={toast} />}
-            </div>
+            {loadingDb ? (
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%', flexDirection: 'column', gap: '16px', color: 'var(--text-muted)' }}>
+                <Loader2 className="spinner" size={32} />
+                <p>Loading database from PostgreSQL...</p>
+              </div>
+            ) : (
+              <div className="page active" style={{ padding: '2rem' }}>
+                {activePage === 'dashboard' && <DashboardPage user={user} toast={toast} db={dbData} />}
+                {activePage === 'history' && <HistoryPage />}
+                {activePage === 'database' && <DatabasePage db={dbData} />}
+                {activePage === 'admin' && <AdminPage toast={toast} db={dbData} onToggleCategory={handleToggleCategory} />}
+              </div>
+            )}
           </div>
         </main>
       </div>

@@ -3,7 +3,7 @@ import { CheckCircle, Settings, Shield, Server, ArrowRight, User, Zap, Database,
 import { jsPDF } from 'jspdf';
 
 // ─── API Config ────────────────────────────────────────────
-const API_URL = 'http://localhost:5000/api';
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 // Note: NLPEngine logic has been moved to the Node.js backend using the 'natural' package 
 // for stemming, tokenization, and fuzzy Jaro-Winkler distance matching.
